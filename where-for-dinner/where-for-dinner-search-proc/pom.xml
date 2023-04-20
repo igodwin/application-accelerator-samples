@@ -8,6 +8,13 @@
 		<version>3.0.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+	<repositories>
+		<repository>
+			<id>gemfire-release-repo</id>
+			<name>VMware Maven Repository</name>
+			<url>https://commercial-repo.pivotal.io/data3/gemfire-release-repo/gemfire</url>
+		</repository>
+	</repositories>
 	<groupId>com.example</groupId>
 	<artifactId>where-for-dinner-search-proc</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
@@ -16,6 +23,11 @@
 	<properties>
 		<java.version>17</java.version>
 		<spring-cloud.version>2022.0.2</spring-cloud.version>
+		<spring-cloud-bindings.version>1.11.0</spring-cloud-bindings.version>
+		<spring-boot.version>2.7</spring-boot.version>
+		<spring-boot-for-gemfire.version>1.1.0</spring-boot-for-gemfire.version>
+		<gemfire.version>9.15.4</gemfire.version>
+		<gemfire.version.minor>9.15</gemfire.version.minor>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -25,7 +37,12 @@
 		<dependency>
   			<groupId>org.springframework.boot</groupId>
   			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>	
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-bindings</artifactId>
+			<version>${spring-cloud-bindings.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis-reactive</artifactId>
@@ -48,6 +65,16 @@
 			<groupId>io.projectreactor</groupId>
 			<artifactId>reactor-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.vmware.gemfire</groupId>
+			<artifactId>spring-boot-${spring-boot.version}-gemfire-${gemfire.version.minor}</artifactId>
+			<version>${spring-boot-for-gemfire.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.vmware.gemfire</groupId>
+			<artifactId>geode-core</artifactId>
+			<version>${gemfire.version}</version>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>

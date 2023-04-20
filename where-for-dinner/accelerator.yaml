@@ -137,6 +137,8 @@ accelerator:
       text: In Memory
     - value: redisCache
       text: Redis
+    - value: gemFireCache
+      text: GemFire
     required: true
   - label: Dyamically Provision Cache
     description: "If set to true, the cache will be dynamically provisioned.  Requires Crossplane and CSP packages to be installed."
@@ -167,6 +169,16 @@ accelerator:
     dependsOn: 
       name: cacheType
       value: redisCache
+  - label: Cache Instance Name
+    description: The name of the cache ClassClaim that the application services will connect to.
+    defaultValue: cache-where-for-dinner
+    name: gemFireClusterName
+    inputType: text
+    dataType: string
+    required: true
+    dependsOn:
+      name: cacheType
+      value: gemFireCache
   - label: Enable Cloud Events
     description: "If set to true, the application will use CloudEvents and Knative as the internal eventing/messagiung model instead of spring cloud streams.  Currently not available with dynamic message broker provisioning"
     defaultValue: false
@@ -369,7 +381,23 @@ engine:
     - type: YTT  
     - type: RewritePath
       regex: 'templates/redisResourceClaim.yaml'
-      rewriteTo: "'config/app-operator/redisResourceClaim.yaml'"  
+      rewriteTo: "'config/app-operator/redisResourceClaim.yaml'"
+  - condition:
+      "#cacheType == 'gemFireCache'"
+    include: ["**/gemFireInstance.yaml"]
+    chain:
+      - type: YTT
+      - type: RewritePath
+        regex: 'templates/gemFireInstance.yaml'
+        rewriteTo: "'config/service-operator/gemFireInstance.yaml'"
+  - condition:
+      "#cacheType == 'gemFireCache'"
+    include: ["**/gemFireResourceClaim.yaml"]
+    chain:
+      - type: YTT
+      - type: RewritePath
+        regex: 'templates/gemFireResourceClaim.yaml'
+        rewriteTo: "'config/app-operator/gemFireResourceClaim.yaml'"
   - type: InvokeFragment
     reference: build-wrapper-maven
   - include: ["README.md"]      
