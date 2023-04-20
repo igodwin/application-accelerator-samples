@@ -30,6 +30,13 @@
       kind: ClassClaim
       name: #@ data.values.cacheName 
 #@ end     
+#@ if usesCache == True and data.values.cacheType == "gemFireCache":
+  - name: cache
+    ref:
+      apiVersion: services.apps.tanzu.vmware.com/v1alpha1
+      kind: ClassClaim
+      name: #@ data.values.gemFireClusterName
+#@ end
 #@ end
 
 
@@ -44,11 +51,23 @@
 #@ end
 #@ profiles = profiles + "mysql"
 #@ end
+#@ if addCacheProf == True and data.values.cacheType == "inmemCache":
+#@ if profiles != "":
+#@    profiles = profiles + ","
+#@ end
+#@ profiles = profiles + "inmem"
+#@ end
 #@ if addCacheProf == True and data.values.cacheType == "redisCache":
 #@ if profiles != "":
 #@    profiles = profiles + ","
 #@ end
 #@ profiles = profiles + "redis"
+#@ end
+#@ if addCacheProf == True and data.values.cacheType == "gemFireCache":
+#@ if profiles != "":
+#@    profiles = profiles + ","
+#@ end
+#@ profiles = profiles + "gemfire"
 #@ end
 #@ if addCrawlerProf:
 #@ if profiles != "":

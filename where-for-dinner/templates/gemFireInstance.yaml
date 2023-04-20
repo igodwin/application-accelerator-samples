@@ -1,0 +1,145 @@
+#@ load("@ytt:data", "data")
+#---
+#apiVersion: apps/v1
+#kind: Deployment
+#metadata:
+#  name: #@ data.values.gemFireClusterName
+#  namespace: #@ data.values.serviceNamespace
+#  labels:
+#    app: where-for-dinner
+#    service: #@ data.values.gemFireClusterName
+#spec:
+#  selector:
+#    matchLabels:
+#      app: where-for-dinner
+#      service: #@ data.values.gemFireClusterName
+#  replicas: 1
+#  template:
+#    metadata:
+#      labels:
+#        app: where-for-dinner
+#        service: #@ data.values.gemFireClusterName
+#    spec:
+#      containers:
+#        - name: redis
+#          image: bitnami/redis
+#          imagePullPolicy: Always
+#          resources:
+#            requests:
+#              cpu: "100m"
+#              memory: "100Mi"
+#          ports:
+#            - name: redis
+#              containerPort: 6379
+#              protocol: "TCP"
+#          env:
+#          - name: REDIS_HOST
+#            value: #@ data.values.gemFireClusterName
+#          - name: REDIS_PASSWORD
+#            valueFrom:
+#              secretKeyRef:
+#                name: #@ data.values.gemFireClusterName + "-redis-password"
+#                key: password
+#          volumeMounts:
+#            - mountPath: /var/lib/redis
+#              name: redis-data
+#
+#      volumes:
+#        - name: redis-data
+#          emptyDir: {}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: where-for-dinner-gemfire-secret-template-reader
+  namespace: #@ data.values.serviceNamespace
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: where-for-dinner-gemfire-secret-template-reader
+  namespace: #@ data.values.serviceNamespace
+rules:
+- apiGroups:
+  - "*"
+  resources:
+  - secrets
+  - services
+  - pods
+  - gemfireclusters
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: where-for-dinner-gemfire-secret-template-reader
+  namespace: #@ data.values.serviceNamespace
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: where-for-dinner-gemfire-secret-template-reader
+subjects:
+- kind: ServiceAccount
+  name: where-for-dinner-gemfire-secret-template-reader
+---
+apiVersion: secretgen.carvel.dev/v1alpha1
+kind: SecretTemplate
+metadata:
+ name: #@ data.values.gemFireClusterName + "-gemfire-secret"
+ namespace: #@ data.values.serviceNamespace
+spec:
+ serviceAccountName: where-for-dinner-gemfire-secret-template-reader
+ inputResources:
+ - name: gemfire-locator-service
+   ref:
+    apiVersion: v1
+    kind: Service
+    name: #@ data.values.gemFireClusterName + "-locator"
+ - name: gemfire-locator-pod
+   ref:
+     apiVersion: v1
+     kind: Pod
+     name: #@ data.values.gemFireClusterName + "-locator-0"
+ template:
+  metadata:
+   labels:
+     app.kubernetes.io/component: gemfire
+     app.kubernetes.io/instance: #@ data.values.gemFireClusterName
+     services.apps.tanzu.vmware.com/class: where-for-dinner-gemfire
+  stringData:
+    host: $(.gemfire-locator-pod.spec.hostname).$(.gemfire-locator-pod.spec.containers[?(@.name=="locator")].env[?(@.name=="LOCATOR_SERVICE")].value)
+    port: $(.gemfire-locator-service.spec.ports[?(@.name=="locator")].port)
+    provider: vmware
+    type: gemfirecluster
+---
+apiVersion: services.apps.tanzu.vmware.com/v1alpha1
+kind: ClusterInstanceClass
+metadata:
+  name: gemfire-where-for-dinner
+spec:
+  description:
+    short: Where for Dinner GemFire
+  pool:
+    kind: Secret
+    labelSelector:
+      matchLabels:
+        services.apps.tanzu.vmware.com/class: where-for-dinner-gemfire
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: where-for-dinner-gemfire-secret-reader
+  labels:
+    servicebinding.io/controller: "true"
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
