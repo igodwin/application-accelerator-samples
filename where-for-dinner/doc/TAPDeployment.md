@@ -70,7 +70,7 @@ If the application was successfully deployed, you should see a section at the bo
 ```
 Knative Services
 NAME                READY   URL
-where-for-dinner    Ready   http://where-for-dinner.perfect300rock.com
+where-for-dinner    Ready   http://where-for-dinner.tap.ivangodwin.com
 ```
 
 ### Monitor and Verify Installation
@@ -314,7 +314,7 @@ If the application was successfully deployed, you should see a section at the bo
 ```
 Knative Services
 NAME                READY   URL
-where-for-dinner    Ready   http://where-for-dinner.perfect300rock.com
+where-for-dinner    Ready   http://where-for-dinner.tap.ivangodwin.com
 ```
 
 If you chose the TAP Spring Cloud Gateway as the gateway option, use the URL that entered in the `Workload URL` field of the accelerator.
@@ -358,12 +358,12 @@ tap_gui:
    .
    .
    backend:
-      baseUrl: http://tap-gui.perfect300rock.com
+      baseUrl: http://tap-gui.tap.ivangodwin.com
       cors:
-        origin: http://tap-gui.perfect300rock.com
+        origin: http://tap-gui.tap.ivangodwin.com
       reading:
         allow:
-          - host: 'where-for-dinner.perfect300rock.com'      
+          - host: 'where-for-dinner.tap.ivangodwin.com'      
 ```
 
 You will need to update your TAP install with the updated tap-values file before the CORS change takes effect.
