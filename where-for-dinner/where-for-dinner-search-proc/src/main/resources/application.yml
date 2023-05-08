@@ -134,16 +134,6 @@ management:
 ---
 
 spring:
-  config.activate.on-profile: gemfire
-
-  data:
-    gemfire:
-      locator.host: ${spring.gemfirecluster.host}
-      locator.port: ${spring.gemfirecluster.port}
-
----
-
-spring:
   config.activate.on-profile: kafka
   
   cloud: 
