@@ -1,52 +1,4 @@
 #@ load("@ytt:data", "data")
-#---
-#apiVersion: apps/v1
-#kind: Deployment
-#metadata:
-#  name: #@ data.values.gemFireClusterName
-#  namespace: #@ data.values.serviceNamespace
-#  labels:
-#    app: where-for-dinner
-#    service: #@ data.values.gemFireClusterName
-#spec:
-#  selector:
-#    matchLabels:
-#      app: where-for-dinner
-#      service: #@ data.values.gemFireClusterName
-#  replicas: 1
-#  template:
-#    metadata:
-#      labels:
-#        app: where-for-dinner
-#        service: #@ data.values.gemFireClusterName
-#    spec:
-#      containers:
-#        - name: redis
-#          image: bitnami/redis
-#          imagePullPolicy: Always
-#          resources:
-#            requests:
-#              cpu: "100m"
-#              memory: "100Mi"
-#          ports:
-#            - name: redis
-#              containerPort: 6379
-#              protocol: "TCP"
-#          env:
-#          - name: REDIS_HOST
-#            value: #@ data.values.gemFireClusterName
-#          - name: REDIS_PASSWORD
-#            valueFrom:
-#              secretKeyRef:
-#                name: #@ data.values.gemFireClusterName + "-redis-password"
-#                key: password
-#          volumeMounts:
-#            - mountPath: /var/lib/redis
-#              name: redis-data
-#
-#      volumes:
-#        - name: redis-data
-#          emptyDir: {}
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -113,7 +65,7 @@ spec:
     host: $(.gemfire-locator-pod.spec.hostname).$(.gemfire-locator-pod.spec.containers[?(@.name=="locator")].env[?(@.name=="LOCATOR_SERVICE")].value)
     port: $(.gemfire-locator-service.spec.ports[?(@.name=="locator")].port)
     provider: vmware
-    type: gemfirecluster
+    type: gemfire
 ---
 apiVersion: services.apps.tanzu.vmware.com/v1alpha1
 kind: ClusterInstanceClass
