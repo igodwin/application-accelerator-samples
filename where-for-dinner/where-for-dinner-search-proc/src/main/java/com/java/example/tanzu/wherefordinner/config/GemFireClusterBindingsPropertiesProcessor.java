@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class GemFireClusterBindingsPropertiesProcessor implements BindingsPropertiesProcessor {
-  public static final String TYPE = "gemfirecluster";
+  public static final String TYPE = "gemfire";
 
   @Override
   public void process(Environment environment, Bindings bindings, Map<String, Object> properties) {
