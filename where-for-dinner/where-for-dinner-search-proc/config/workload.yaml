@@ -10,6 +10,16 @@ metadata:
     networking.knative.dev/visibility: cluster-local
 spec:
   params:
+  - name: maven
+    value:
+      groupId: "com.vmware.gemfire"
+      artifactId: "spring-boot-2.7-gemfire-9.15"
+      version: "1.1.0"
+  - name: maven
+    value:
+      groupId: "com.vmware.gemfire"
+      artifactId: "geode-core"
+      version: "9.15.4"
   - name: annotations
     value:
       autoscaling.knative.dev/minScale: "1"
