@@ -13,7 +13,7 @@ function DiningSearch(props)
        if (window.confirm("Do you wish do delete the search " + props.search.name))
        {
          axios.delete('/api/search/search/' + props.search.id)
-         //axios.delete('http://where-for-dinner.perfect300rock.com/api/search/' + props.search.id)
+         //axios.delete('http://where-for-dinner.tap.ivangodwin.com/api/search/' + props.search.id)
          .then(rest =>{
             var newSearches = props.submittedSearches.filter(obj => obj.id != props.search.id);
             props.setSubmittedSearches(newSearches);
@@ -25,7 +25,7 @@ function DiningSearch(props)
     const loadSearchAvailability= () =>
     {
       axios.get('/api/availability/availability/' + props.search.name)
-      //axios.get('http://where-for-dinner.perfect300rock.com/api/availability/' + props.search.name)
+      //axios.get('http://where-for-dinner.tap.ivangodwin.com/api/availability/' + props.search.name)
       .then(resp => 
       {
         if (resp.data.length > 0)
