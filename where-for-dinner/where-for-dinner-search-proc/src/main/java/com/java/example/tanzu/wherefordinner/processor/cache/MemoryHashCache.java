@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 @Component
-@Profile("inmem")
+@Profile({"!redis","!gemfire"})
 public class MemoryHashCache implements HashCache
 {
 	protected final Map<String, String> cache = new ConcurrentHashMap<>();
