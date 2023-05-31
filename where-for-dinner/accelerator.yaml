@@ -179,6 +179,16 @@ accelerator:
     dependsOn:
       name: cacheType
       value: gemFireCache
+  - label: Maven Repo Credentials Secret
+    description: The name of Secret of type service.binding/maven containing credentials to access gemfire-release-repo.
+    defaultValue: settings-xml
+    name: mavenCreds
+    inputType: text
+    dataType: string
+    required: true
+    dependsOn:
+      name: cacheType
+      value: gemFireCache
   - label: Enable Cloud Events
     description: "If set to true, the application will use CloudEvents and Knative as the internal eventing/messagiung model instead of spring cloud streams.  Currently not available with dynamic message broker provisioning"
     defaultValue: false

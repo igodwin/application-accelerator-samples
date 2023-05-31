@@ -107,7 +107,7 @@
 #@ end
 #@ end
 
-#@ def buildParams():
+#@ def buildParams(usesCache):
 #@ if data.values.enableCloudEvents != True:
   - name: annotations
     value: 
@@ -119,6 +119,13 @@
     value: 
       autoscaling.knative.dev/target: "200"
       autoscaling.knative.dev/maxScale: "4"
+#@ end
+#@ if usesCache == True and data.values.cacheType == "gemFireCache":
+  - name: buildServiceBindings
+    value:
+    - kind: Secret
+      name: #@ data.values.mavenCreds
+      apiVersion: v1
 #@ end
 #@ end
 
@@ -225,7 +232,7 @@ spec:
   env: #@ buildAppEnv(False,False,True,True,True)
   build:
      env: #@ buildBuildParams()
-  params: #@ buildParams()
+  params: #@ buildParams(True)
   serviceClaims: #@ buildServiceClaimsBinding(False, True, False, True)
   resources:     
     requests:         
@@ -258,7 +265,7 @@ spec:
   env: #@ buildAppEnv(False,False,False,False,True)
   build:
      env: #@ buildBuildParams()
-  params: #@ buildParams()
+  params: #@ buildParams(False)
   serviceClaims: #@ buildServiceClaimsBinding(False, True, False, False)
   resources:     
     requests:         
