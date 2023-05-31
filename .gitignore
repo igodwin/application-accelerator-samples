@@ -40,3 +40,6 @@ out/
 
 ### Visual Studio ###
 .vs/
+
+### jEnv ###
+.java-version
